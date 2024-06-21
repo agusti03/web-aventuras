@@ -1,0 +1,185 @@
+.perfil
+{
+    display: block;
+    height: 100%;
+    width: 85%;
+    padding-inline-start: 10px;
+    margin-right: 30px;
+    padding:30px;
+    background-color: white;
+
+}
+.elemento{
+    width:fit-content;
+    height:fit-content;
+    float:left;
+    display:flex;
+}
+.contenedor{
+    padding:10px;
+    display:flex;
+    flex-direction: column; /* Apilar elementos verticalmente */
+    justify-content: left; /* Centrar verticalmente los elementos */
+    align-items: left; /* Centrar horizontalmente los elementos */
+    height: 300px; /* Altura del contenedor */
+    border: 1px solid black; /* Borde para visualización */
+}
+#divFotoPerfil{
+    float:left;
+}
+.divusuarioPuntaje{
+    margin-left:20%;
+    display:flex;
+    justify-content: flex-start;
+    padding:10px;
+    flex-direction: column;
+    border:1px solid #79CEF4;
+    height: 300px;;
+    width: 400px;
+}
+#spanNombreUsuario{
+    float:left;
+}
+#fotoPerfil{
+    height:200px;
+    width: 200px;
+    position: absolute;
+}
+#valoración{
+    top:50%;
+}
+.star {
+    font-size: 30px;
+    cursor: pointer;
+    color: #ccc;
+}
+
+.star:hover,
+.star.rated {
+    color: #ffcc00;
+}
+#seccionBarcos{
+    display: flex;
+    float:left;
+    padding:25px;
+
+}
+#divBarcos{
+    display:flex;
+    flex-direction: column;
+    height:200px;
+    width: 100%;
+    overflow:scroll;
+    overflow-x: hidden;
+    border: 1px black solid;
+    align-items:  flex-start;
+}
+#botonAñadirBarco{
+    display:flex;
+    right:0;
+    height:30px;
+    width: fit-content;
+    background-color: blue;
+    color:white;
+    border: none;
+    cursor:pointer;
+    font-size: larger;
+}
+#botonBorrarBarco{
+
+}
+#botonEditarBarco{
+
+}
+#formAgregarBarco{
+    top:2%;
+    margin-left:30%;
+    position:fixed;
+    height:fit-content;
+    width:500px;
+    padding:20px;
+    align-content: center;
+    align-items: center;
+    z-index: 10;
+    background-color: white;
+    border: 1px solid black;
+    animation: fadeIn 0.5s ease;
+    display: none;
+    text-align: center;
+    border-radius: 10px;
+}
+#formBotAgregar{
+    display:block;
+    height:30px;
+    width: fit-content;
+    background-color: blue;
+    color:white;
+    border: none;
+    cursor:pointer;
+    margin-left:42%;
+}#formBotCancelar{
+    display:block;
+    margin-left:40%;
+    height:30px;
+    width: fit-content;
+    background-color: gray;
+    color:white;
+    border: none;
+    cursor:pointer;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+#tablaBarcos * {
+    height: fit-content;
+    text-align: center;
+    align-items: center;
+}
+#tablaBarcos th{
+    width: 100px;
+}
+#tablaBarcos, td, th{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+.boton-borrar {
+    background-color: #ff3333; /* Rojo */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: underline;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+.boton-editar {
+    background-color: #33ccff; /* Azul claro */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-decoration: underline;
+    text-align: center;
+    text-decoration: underline;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+/* Cambiar color de fondo al pasar el mouse */
+.boton-borrar:hover{
+
+    background-color: #cc0000; /* Rojo oscuro para botón de borrar */
+}
+.boton-editar:hover {
+    background-color: #0099cc; /* Azul oscuro para botón de editar */
+}
