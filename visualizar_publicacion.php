@@ -38,7 +38,7 @@ date_default_timezone_set('America/Argentina/Buenos_Aires');
 </head>
 
 <body>
-    <div style="margin-left:15%; padding:20px; background-color:white; display:block; height:750px; overflow:scroll; overflow-x: hidden; ">
+    <div style="margin-left:15%; padding:20px; background-color:white; display:block; height:650px; overflow:scroll; overflow-x: hidden; ">
         <?php
         if (!isset($_GET['id'])) {
             die('ID de publicación no especificado.');
