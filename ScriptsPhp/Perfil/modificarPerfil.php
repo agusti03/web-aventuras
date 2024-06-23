@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         #divEditarPerfil{
+            z-index:9999;
             top:30%;
             margin-left:40%;
             position:fixed;

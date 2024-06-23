@@ -7,7 +7,8 @@
     margin-right: 30px;
     padding:30px;
     background-color: white;
-
+    overflow: scroll;
+    overflow-y:hidden;
 }
 .elemento{
     width:fit-content;
@@ -22,7 +23,6 @@
     justify-content: left; /* Centrar verticalmente los elementos */
     align-items: left; /* Centrar horizontalmente los elementos */
     height: 300px; /* Altura del contenedor */
-    border: 1px solid black; /* Borde para visualización */
 }
 #divFotoPerfil{
     float:left;
@@ -33,7 +33,6 @@
     justify-content: flex-start;
     padding:10px;
     flex-direction: column;
-    border:1px solid #79CEF4;
     height: 300px;;
     width: 400px;
 }
@@ -41,9 +40,26 @@
     float:left;
 }
 #fotoPerfil{
-    height:200px;
-    width: 200px;
+    height:520px;
+    width: 450px;
     position: absolute;
+}
+#borrar_barco{
+    top:30%;
+    margin-left:30%;
+    position:fixed;
+    height:fit-content;
+    width:500px;
+    padding:50px;
+    align-content: center;
+    align-items: center;
+    z-index: 10;
+    background-color: white;
+    border: 1px solid black;
+    animation: fadeIn 0.5s ease;
+    display: none;
+    text-align: center;
+    border-radius: 10px;
 }
 #valoración{
     top:50%;
@@ -68,7 +84,7 @@
     display:flex;
     flex-direction: column;
     height:200px;
-    width: 100%;
+    width: fit-content;
     overflow:scroll;
     overflow-x: hidden;
     border: 1px black solid;

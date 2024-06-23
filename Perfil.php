@@ -3,6 +3,7 @@
     include("BarraNavegacion.php");
     include("basedatos.php");
     include("ScriptsPhp\Perfil\modificarBarco.php");
+    ob_start();
     include("ScriptsPhp\Perfil\modificarPerfil.php");
     if(!empty($_SESSION["Id"])){
         $id=$_SESSION["Id"];
@@ -29,7 +30,8 @@
     }
    else
    {
-    header("Location: index.php");
+    header("Location:index.php");
+    exit;
    }
 ?>
 <!DOCTYPE html>
@@ -43,7 +45,16 @@
     <title>Perfil de <?php echo $nombreMostrar; ?></title>
 </head>
 <body>
-   <div id="formAgregarBarco">
+    <div id="borrar_barco" >
+        <p>¿Está seguro de que quieres eliminar el barco seleccionado?</p>
+        <p>Esta acción no se puede deshacer...</p>
+        <form action="Perfil.php" method="POST">
+            <input type="hidden" name="idBorrado" id="idBorrar" value="0" >
+            <input type="submit" name="borrarBarco" value="Confirmar"style="position: absolute; left:35%;"/>
+        </form>
+        <button onclick="cancelarBorrado()" style="position: absolute; left:60%;">Cancelar</button>
+    </div>
+   <div id="formAgregarBarco" style="z-index:9999">
         <form action="Perfil.php" method="POST"  enctype="multipart/form-data">
             <label for="Patente">Patente</label> <br>
             <input type="text" name="Patente" id="" required> <br>
@@ -84,7 +95,7 @@
    <section class="perfil" style="margin-left:15%"> 
    <div class="contenedor">
         <div class="elemento" id="divFotoPerfil" style="margin-right:50px;">
-            <img src=<?php echo $fotoPerfil ?> alt="Foto perfil" id="FotoPerfil" style="width:250px; height:250px;">
+            <img src=<?php echo $fotoPerfil ?> alt="Foto perfil" id="fotoPerfil" style="height:220px; width:220px; border:1px solid black">
         </div>
         <div id="botonPerfil" style=" position:absolute;display:none; top:11%; right:5%;">
             <button onclick="mostrarModPerfil()">Editar Perfil.</button>
@@ -113,51 +124,50 @@
         </div>
     </div>
     <div class= "contenedor" id="misBarcos" style="display:none; height:400px;">
-        <h2>Mis embarcaciones: </h2>
+        <h2 style="text-decoration: underline;">Mis embarcaciones: </h2>
         <br>
         <div id="divBarcos" style="border: black 3px solid;">
-            <table id="tablaBarcos">
-                <tr style="text-decoration: underline;">
-                    <th><h3>Foto</h3></th>
-                    <th><h3>Patente</h3></th>
-                    <th><h3>Nombre</h3></th>
-                    <th><h3>Tipo</h3></th>
-                    <th><h3>Marca</h3></th>
-                    <th><h3>Año</h3></th>
-                    <th><h3>Valor</h3></th>
-                    <th><h3>Editar</h3></th>
-                    <th><h3>Borrar</h3></th>
-                </tr>
                 <?php 
                     if($id==$idajeno){
-                        $SQL= mysqli_query($conn,"SELECT * FROM embarcacion WHERE usuarioID = $id ");
-                        if(mysqli_num_rows($SQL)==0){
+                        $SQLquery= mysqli_query($conn,"SELECT * FROM embarcacion WHERE usuarioID = $id ");
+                        if(mysqli_num_rows($SQLquery)==0){
                             echo"<h3> No hay embarcaciones registradas.</h3>";
                         }
                         else{
-                        while($next= mysqli_fetch_assoc($SQL)){
-                            if($next["Foto"]==null){
-                               $foto= "public\img\barcodefault.png";
-                            }
-                            else{
-                                $foto=$next["Foto"];
-                            }
+                            echo "<table id='tablaBarcos'>
+                                <tr style='text-decoration: underline;'>
+                                    <th><h3>Foto</h3></th>
+                                    <th><h3>Patente</h3></th>
+                                    <th><h3>Nombre</h3></th>
+                                    <th><h3>Tipo</h3></th>
+                                    <th><h3>Marca</h3></th>
+                                    <th><h3>Motor</h3></th>
+                                    <th><h3>Año</h3></th>
+                                    <th><h3>Valor</h3></th>
+                                    <th><h3>Editar</h3></th>
+                                    <th><h3>Borrar</h3></th>
+                                </tr>";
+                        while($next= mysqli_fetch_assoc($SQLquery)){
+                            $foto=$next["Foto"];
                             echo "<tr>";
                             echo "<td><img src='$foto' alt='Foto del barco' style='max-width: 100px;'></td>";
+                            echo "<td style='display:none'><h3>{$next['id']}</h3></td>";
+                            echo "<td style='display:none'><h3>{$next['Documentacion']}</h3></td>";
                             echo "<td><h3>{$next['Patente']}</h3></td>";
                             echo "<td><h3>{$next['Nombre']}</h3></td>";
                             echo "<td><h3>{$next['Tipo']}</h3></td>";
                             echo "<td><h3>{$next['Marca']}</h3></td>";
+                            echo "<td><h3>{$next['Motor']}</h3></td>";
                             echo "<td><h3>{$next['Anio']}</h3></td>";
                             echo "<td><h3>{$next['Valor']}</h3></td>";
-                            echo "<td><button class='boton-editar' onclick='editar({$next['id']})'>Editar embarcación</button></td>";
+                            echo "<td><button class='boton-editar' data-id='{$next['id']}' data-patente='{$next['Patente']}' data-nombre='{$next['Nombre']}' data-tipo='{$next['Tipo']}' data-marca='{$next['Marca']}' data-motor='{$next['Motor']}' data-modelo='{$next["Modelo"]}' data-anio='{$next['Anio']}' data-valor='{$next['Valor']}' data-foto='{$foto}' data-documentacion='{$next['Documentacion']}' onclick='editarEmbarcacion(this)'>Editar embarcación</button></td>";
                             echo "<td><button class='boton-borrar' onclick='borrar({$next['id']})'>Borrar embarcación</button></td>";
                             echo "</tr>";
                         }
+                        echo "</table>";
                         }
                     }
                 ?>
-            </table>
         </div>
         <br>
         <br><button id="botonAñadirBarco" onclick="mostrarAgregarBarco()" style="margin-top: 10px;"> <i class="fas fa-plus"></i>  Agregar embarcación.</button>
@@ -194,13 +204,12 @@
             $tipoBarco=$_POST["Tipo"];
             $motorBarco=$_POST["Motor"];
             $valorBarco=$_POST["Valor"];
-            if(isset($_FILES["Foto"])){
+            if(isset($_FILES["Foto"])&& $_FILES["Foto"]['error'] !== UPLOAD_ERR_NO_FILE){
                 $rutaFoto="public\img".$_FILES["Foto"]["name"];
                 move_uploaded_file($_FILES["Foto"]["tmp_name"],$rutaFoto);
                 $rutaFotoEscapada=mysqli_real_escape_string($conn,$rutaFoto);
-            }
-            else{
-                $rutaFotoEscapada="public\img\barcodefault.png";
+            }else{
+                $rutaFotoEscapada=mysqli_real_escape_string($conn,"public\img\barcoDefault.png");
             }
             $temporal=$_FILES["documento"]["name"];
             $rutaPdf="public\Pdfs\'{$temporal}'";
@@ -217,7 +226,7 @@
                                 }
                             window.location = window.location.href;
                         </script>";
-                die();
+                exit;
             }
             else{
                 echo "<script> alert('Se produjo un error, intenta ingresar nuevamente los datos'); </script>";
@@ -248,6 +257,7 @@
             $sql="UPDATE usuario SET Valoracion= $valoracion where id='$idajeno'";
             mysqli_query($conn,$sql);
             $conn->close();
+            exit;
         }
     }
     function promedio($valoraciones){
@@ -315,18 +325,6 @@ function submitRating() {
         $valorEditar=$_POST["idEditar"];
         $row=mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM embarcacion where id = $valorEditar"));
         $patenteVieja=$row["Patente"];
-        if(isset($_FILES["Foto"])){
-            $rutaFoto="public\img".$_FILES["Foto"]["name"];
-            move_uploaded_file($_FILES["Foto"]["tmp_name"],$rutaFoto);
-            $rutaFotoEscapada=mysqli_real_escape_string($conn,$rutaFoto);
-        }
-        else{
-            $rutaFotoEscapada=mysqli_real_escape_string($conn,"public\img\barcodefault.png");
-        }
-        $temporal=$_FILES["documento"]["name"];
-        $rutaPdf="public\Pdfs\'{$temporal}'";
-        move_uploaded_file($_FILES["documento"]["tmp_name"],$rutaPdf);
-        $rutaPdfEscapada=mysqli_real_escape_string($conn,$rutaPdf);
         $Query="SELECT * FROM embarcacion where Patente = '$patenteBarcoCambiar'";
         $resultado=mysqli_query($conn, $Query);
         if(mysqli_num_rows($resultado) > 0 && $patenteBarcoCambiar!=$patenteVieja){
@@ -338,9 +336,26 @@ function submitRating() {
             if($row["Ofertado"]==1){
                echo "<script>alert('Error, la embarcación está siendo ofertada/publicada, para modificarla elimine la oferta/publicación e intente de nuevo.');</script>";
             }
-            else{
-                $Query="UPDATE embarcacion SET Nombre='$nombreBarco', Marca='$marcaBarco', Modelo='$modeloBarco', Anio='$anioBarco', Tipo='$tipoBarco', Patente='$patenteBarcoCambiar', Motor='$motorBarco', Valor='$valorBarco', Foto='$rutaFotoEscapada', Documentacion='$rutaPdfEscapada' WHERE id = $valorEditar";
-                mysqli_query($conn, $Query);
+            else{        
+                 if(isset($_FILES["Foto"])&&$_FILES["Foto"]['error'] !== UPLOAD_ERR_NO_FILE){ 
+                    $rutaFoto="public\img".$_FILES["Foto"]["name"];
+                    move_uploaded_file($_FILES["Foto"]["tmp_name"],$rutaFoto);
+                    $rutaFotoEscapada=mysqli_real_escape_string($conn,$rutaFoto);
+                 }
+                else{
+                    $rutaFotoEscapada=mysqli_real_escape_string($conn,$row["Foto"]);
+                }
+                if(isset($_FILES["documento"])&&$_FILES["documento"]['error'] !== UPLOAD_ERR_NO_FILE){
+                    $temporal=$_FILES["documento"]["name"];
+                    $rutaPdf="public\Pdfs\'{$temporal}'";
+                    move_uploaded_file($_FILES["documento"]["tmp_name"],$rutaPdf);
+                    $rutaPdfEscapada=mysqli_real_escape_string($conn,$rutaPdf);
+                }
+                else{
+                    $rutaPdfEscapada=mysqli_real_escape_string($conn,$row["Documentacion"]);
+                }
+                    $Query="UPDATE embarcacion SET Nombre='$nombreBarco', Marca='$marcaBarco', Modelo='$modeloBarco', Anio='$anioBarco', Tipo='$tipoBarco', Patente='$patenteBarcoCambiar', Motor='$motorBarco', Valor='$valorBarco', Foto='$rutaFotoEscapada', Documentacion='$rutaPdfEscapada' WHERE id = $valorEditar";
+                    mysqli_query($conn, $Query);
             }           
         }
         $conn->close();
@@ -350,37 +365,51 @@ function submitRating() {
                         }
                     window.location = window.location.href;
                 </script>";
-        die();
+        exit;
     }
 ?>
 <script>
     var divfor= document.getElementById("editarBarco");
-    var ve=0;
     var form= document.getElementById('editarBarcoForm');
     function borrar(idBorrar){
-        let xhr = new XMLHttpRequest();
-            xhr.open('POST',window.location.href, true);
-            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    console.log(xhr.responseText); // Imprime la respuesta del servidor en la consola
-                }
-            };
-            xhr.send("idBorrar="+idBorrar);
+        document.getElementById("borrar_barco").style.display="block";
+        document.getElementById("idBorrar").value=idBorrar;
+        cerrarFor();
     }
-    function editar(idEditar){
+    function cancelarBorrado(){
+        document.getElementById("borrar_barco").style.display="none";
+    }
+    function editarEmbarcacion(button) {
+        var idEditar = button.getAttribute('data-id');
+        var patente = button.getAttribute('data-patente');
+        var nombre = button.getAttribute('data-nombre');
+        var tipo = button.getAttribute('data-tipo');
+        var modelo= button.getAttribute('data-modelo');
+        var marca = button.getAttribute('data-marca');
+        var motor = button.getAttribute('data-motor');
+        var anio = button.getAttribute('data-anio');
+        var valor = button.getAttribute('data-valor');
+        var foto = button.getAttribute('data-foto');
+        var documentacion = button.getAttribute('data-documentacion'); 
+        document.getElementById('escondido').value = idEditar;
+        document.getElementById('pat').value = patente;
+        document.getElementById('nom').value = nombre;
+        document.getElementById('tip').value = tipo;
+        document.getElementById('mar').value = marca;
+        document.getElementById('mod').value = modelo;
+        document.getElementById('mot').value = motor;
+        document.getElementById('ani').value = anio;
+        document.getElementById('val').value = valor;
         divfor.style.display="block";
-        ve=idEditar;
+        cancelarBorrado();
     }
-    function getEditar(){
-        return ve;
-    }
+    //{$next['id']},{$next['Patente']},{$next['Nombre']},{$next['Tipo']},{$next['Marca']},{$next['Motor']},{$next['Anio']},{$next['Valor']},{$next['Foto']},{$next['Documentacion']}
     function cerrarFor(){
         divfor.style.display="none";
     }
     function subir(){
-            document.getElementById('escondido').value = getEditar();
             var formd= new FormData(form);
+            window.location.href = "Perfil.php";
             let xhr = new XMLHttpRequest();
             xhr.open('POST',window.location.href, true);
             xhr.onreadystatechange = function() {
@@ -389,19 +418,21 @@ function submitRating() {
                 }
             };
             xhr.send(formd);
+            window.location=window.location.href;
         }
 </script>
 <?php 
-    if(isset($_POST["idBorrar"])){
-        $idborrar=$_POST["idBorrar"];
+    if(isset($_POST["borrarBarco"])){
+        $idborrar=$_POST["idBorrado"];
         $query="DELETE FROM embarcacion WHERE id = '$idborrar'";
-        mysqli_query($conn,$query);
+        mysqli_query($conn,$query); 
         echo "<script>
         if ( window.history.replaceState ) {
                 window.history.replaceState( null, null, window.location.href );
                     }
                 window.location = window.location.href;
             </script>";
+        exit;
     }
 ?>
 <?php 
@@ -437,6 +468,6 @@ function submitRating() {
                     }
                 window.location = window.location.href;
             </script>";
-        die();
+        exit;
     }
 ?>

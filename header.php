@@ -2,7 +2,6 @@
 session_start();
 include("basedatos.php");
 ?>
-
 <head>
     <link rel="icon" href="public/img/favicon.png">
     <!-- Fuentes -->
@@ -38,21 +37,20 @@ include("basedatos.php");
         </div>
     </section>
     <!-- Enlace para las notificaciones -->
-    <div style="position: absolute; right: 150px; top: 20px; background-color:lightblue">
+    <div id="notif" style="display:none; position: absolute; right: 150px; top: 20px; background-color:lightblue">
         <?php 
             if(!empty($_SESSION["Id"])){
                 $idusuario=$_SESSION["Id"];
                 $sqlquery="SELECT * FROM notificacion WHERE usuarioID = '$idusuario'";
                 $resultado=mysqli_query($conn,$sqlquery);
-                $booleano=0;
+                $cant=0;
                 while($row=mysqli_fetch_assoc($resultado)){
                     if($row["leido"]==0){
-                        $booleano=1;
-                        break;
+                        $cant++;
                     }
                 }
-                if($booleano==1){
-                    echo "<button style='position:absolute; height:3px; width:1px; border-radius:50%; background-color:red'><button>";
+                if($cant>=1){
+                    echo "<button style='position:absolute; height:3px; width:1px; border-radius:50%; background-color:red'>$cant<button>";
                 }
             }
         ?>
@@ -80,6 +78,7 @@ include("basedatos.php");
         boton.style.display = "none";
         document.getElementById("Bienvenida").style.display = "block";
         document.getElementById("cerrarSesi").style.display = "block";
+        document.getElementById("notif").style.display="block";
     }
 </script>
 <?php
