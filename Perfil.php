@@ -30,7 +30,8 @@
     }
    else
    {
-    header("Location:index.php");
+    
+    echo '<script>window.location.href = "index.php";</script>';
     exit;
    }
 ?>
@@ -93,13 +94,12 @@
         </form>
    </div>
    <section class="perfil" style="margin-left:15%"> 
-   <div class="contenedor">
-        <div class="elemento" id="divFotoPerfil" style="margin-right:50px;">
+
+   <div class="contenedor" style="flex-direction: row;">
+        <div class="elemento" id="divFotoPerfil" style="margin-right:50px; display:flex;">
             <img src=<?php echo $fotoPerfil ?> alt="Foto perfil" id="fotoPerfil" style="height:220px; width:220px; border:1px solid black">
         </div>
-        <div id="botonPerfil" style=" position:absolute;display:none; top:11%; right:5%;">
-            <button onclick="mostrarModPerfil()">Editar Perfil.</button>
-        </div>
+        
         <div class="divusuarioPuntaje">
             <div id="spanNombreUsuario" class="elemento">
                 <h1 style="text-decoration: underline;"> Usuario: <?php echo $nombreMostrar ?> </h1>
@@ -121,7 +121,46 @@
             </div>
         </div>
         </div>
+        <div id="botonPerfil" style="display:none; flex-direction:row ;top:17%; right:17%;">
+            <button onclick="mostrarModPerfil()"style="background-color:darkcyan;color:white;cursor:pointer; width:fit-content; height:fit-content;display:flex;">Editar Perfil</button><br>
+            <button onclick="mostrarIntercambios()" style="background-color:darkcyan;color:white; cursor:pointer;width:fit-content; height:fit-content;display:flex;">Mostrar Historial</button>
         </div>
+        </div>
+    </div>
+    <div id="intercambios">
+        <button onclick="cerrarIntercambios()"style="background-color:red; color:white; border-radius: 10px; border:0px; cursor:pointer;">X</button>
+        <?php 
+            $sql="SELECT i.id as idInt, u1.NombreUsuario as nom1, u2.NombreUsuario as nom2, e1.Patente as pat1, e2.Patente as pat2, e1.Foto as fot1, e2.Foto as fot2, i.fecha as fecha FROM intercambio i INNER JOIN usuario u1 ON i.fk_usuario1 = u1.id
+            INNER JOIN usuario u2 ON i.fk_usuario2 = u2.id
+            INNER JOIN embarcacion e1 ON i.fk_embarcacion1 = e1.id
+            INNER JOIN embarcacion e2 ON i.fk_embarcacion2 = e2.id
+            WHERE i.fk_usuario1 = $idajeno OR i.fk_usuario2 = $idajeno";
+            $result=mysqli_query($conn,$sql);
+            while($row=mysqli_fetch_assoc($result)){
+                $nom1=$row["nom1"];
+                $nom2=$row["nom2"];
+                $em1=$row["pat1"];
+                $fot1=$row["fot1"]??"public\img\barcoDefault.png";
+                $em2=$row["pat2"];
+                $fot2=$row["fot2"]??"public\img\barcoDefault.png";
+                $fecha=$row["fecha"];
+                echo "<div class='intercambio' onclick='mostrarDetallesIntercambio({$row['idInt']})'>";
+                echo "<div class='cont1'>";
+                echo "<div class='info'>";
+                echo "<p>Usuario: {$nom1}</p>";
+                echo "</div>";
+                echo "<img src='{$fot1}' alt='Foto Embarcación 1' style='max-width: 100px;border:1px solid black'>";
+                echo "</div>";
+                echo "<img src='public\img\Restock.jpg' alt='Cambio por:' style='width:80px; height:80px;'>";
+                echo "<div class='cont1'>";
+                echo "<div class='info'>";
+                echo "<p>Usuario: {$nom2}</p>";
+                echo "</div>";
+                echo "<img src='{$fot2}' alt='Foto Embarcación 2' style='max-width: 100px;border:1px solid black'>";
+                echo "</div>";
+                echo "</div>";
+            }
+        ?>
     </div>
     <div class= "contenedor" id="misBarcos" style="display:none; height:400px;">
         <h2 style="text-decoration: underline;">Mis embarcaciones: </h2>
@@ -175,19 +214,6 @@
    </section>
 </body>
 </html>
-<script>
-    var formbarco= document.getElementById("formAgregarBarco");
-    function mostrarAgregarBarco(){
-       formbarco.style.display="block";
-    }
-    function cerrarFormBarco(){
-        formbarco.style.display="none";
-    }
-    function mostrarMisBarcos(){
-        document.getElementById("misBarcos").style.display="flex";
-        document.getElementById("botonPerfil").style.display="block";
-    }
-</script>
 <?php 
     if($_SERVER["REQUEST_METHOD"]=="POST" && isset($_POST["subirBarco"])){
         $patenteBarco=$_POST["Patente"];
@@ -302,15 +328,6 @@ function submitRating() {
     xhr.send("rating=" + rating);
 }
 </script>
-<?php 
-    if($idajeno!=$_SESSION["Id"]){
-        echo "<script> mostrarValorar(); </script>";
-    }
-    else{
-        
-        echo "<script> mostrarMisBarcos(); </script>";
-    }
-?>
 <?php
     if(isset($_POST["idEditar"])){
         $nombreBarco=$_POST["Nombre"];
@@ -371,9 +388,39 @@ function submitRating() {
 <script>
     var divfor= document.getElementById("editarBarco");
     var form= document.getElementById('editarBarcoForm');
+    var formbarco= document.getElementById("formAgregarBarco");
+    var interc=document.getElementById("intercambios");
+    function mostrarDetallesIntercambio(id){
+        var url="detalle-oferta.php?idOferta="+id;
+        window.open(url);
+    }
+    function cerrarIntercambios(){
+        interc.style.display="none";
+    }
+    function mostrarIntercambios(){
+        cancelarBorrado();
+        cerrarFormBarco();
+        cerrarFor();
+        interc.style.display="block";
+    }
+    function mostrarAgregarBarco(){
+       formbarco.style.display="block";
+       cerrarIntercambios();
+       cancelarBorrado();
+       cerrarFor();
+    }
+    function cerrarFormBarco(){
+        formbarco.style.display="none";
+    }
+    function mostrarMisBarcos(){
+        document.getElementById("misBarcos").style.display="flex";
+        document.getElementById("botonPerfil").style.display="flex";
+    }
     function borrar(idBorrar){
         document.getElementById("borrar_barco").style.display="block";
         document.getElementById("idBorrar").value=idBorrar;
+        cerrarIntercambios();
+        cerrarFormBarco();
         cerrarFor();
     }
     function cancelarBorrado(){
@@ -402,8 +449,9 @@ function submitRating() {
         document.getElementById('val').value = valor;
         divfor.style.display="block";
         cancelarBorrado();
+        cerrarIntercambios();
+        cerrarFormBarco();
     }
-    //{$next['id']},{$next['Patente']},{$next['Nombre']},{$next['Tipo']},{$next['Marca']},{$next['Motor']},{$next['Anio']},{$next['Valor']},{$next['Foto']},{$next['Documentacion']}
     function cerrarFor(){
         divfor.style.display="none";
     }
@@ -444,16 +492,14 @@ function submitRating() {
             echo "<script>alert('Error nombre de usuario repetido');</script>";
         }
         else{
-            if(isset($_FILES["pfp"])&& $_FILES["pfp"]["name"]!=null){
+            if(isset($_FILES["pfp"]) && $_FILES["pfp"]['error'] !== UPLOAD_ERR_NO_FILE){
                 $rutaFoto="public\img" .$_FILES["pfp"]["name"];
                 move_uploaded_file($_FILES["pfp"]["tmp_name"],$rutaFoto);
                 $pfp=mysqli_real_escape_string($conn,$rutaFoto);
-            }
-            if(is_null($pfp)){
-                $query="UPDATE usuario SET NombreUsuario = '$nombrePerfil' WHERE id = '$idPerfil'";
+                $query="UPDATE usuario SET NombreUsuario = '$nombrePerfil', DirFotoPerfil='$pfp' WHERE id = '$idPerfil'";
             }
             else{
-                $query="UPDATE usuario SET NombreUsuario = '$nombrePerfil', DirFotoPerfil='$pfp' WHERE id = '$idPerfil'";
+                $query="UPDATE usuario SET NombreUsuario = '$nombrePerfil' WHERE id = '$idPerfil'";
             }
             if(!mysqli_query($conn,$query)){
                 echo "<script>alert('Error');</script>";
@@ -469,5 +515,15 @@ function submitRating() {
                 window.location = window.location.href;
             </script>";
         exit;
+    }
+?>
+
+<?php 
+    if($idajeno!=$_SESSION["Id"]){
+        echo "<script> mostrarValorar(); </script>";
+    }
+    else{
+        
+        echo "<script> mostrarMisBarcos(); </script>";
     }
 ?>

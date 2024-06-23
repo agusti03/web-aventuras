@@ -30,7 +30,7 @@
             <label for="fotoPerfil">Nueva foto de perfil</label> <br>
                 <input type="file" name="pfp" accept="image/*"/> <br><br>
             <label for="Nombre">Nuevo nombre de perfil</label><br>
-                <input type="text" name="nombrePerfil"><br><br>
+                <input type="text" name="nombrePerfil" value='<?php echo $_SESSION["username"];?>'><br><br>
             <input type="submit" name="cambiarNombre" value="Aceptar"/>
             <button onclick="cerrarModPerfil()">Cancelar</button>
         </form>

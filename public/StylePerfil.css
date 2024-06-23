@@ -8,7 +8,34 @@
     padding:30px;
     background-color: white;
     overflow: scroll;
-    overflow-y:hidden;
+    overflow-x:hidden;
+}
+#intercambios{
+    max-height: 400px; /* Altura máxima del contenedor */
+    overflow-y: auto; /* Mostrar barra de desplazamiento vertical si es necesario */
+    border: 1px solid black; /* Borde para visualización */
+    position:fixed;
+    background-color: lightblue;
+    z-index: 99;
+    right:18%;
+    top:12%;
+    width:fit-content;
+    display:none;
+}
+.intercambio{
+    background-color: white;
+    border: 1px solid #111; /* Borde para visualización */
+    display: flex;
+    flex-direction: row;
+    cursor:pointer;
+}
+.info{
+    margin: 10px;
+}
+.cont1{
+    display:flex;
+    margin: 10px;
+    text-align: left;
 }
 .elemento{
     width:fit-content;
@@ -16,6 +43,7 @@
     float:left;
     display:flex;
 }
+
 .contenedor{
     padding:10px;
     display:flex;
@@ -26,15 +54,20 @@
 }
 #divFotoPerfil{
     float:left;
+    align-self:flex-start;
+    width: fit-content;
+    height:0%;
 }
 .divusuarioPuntaje{
-    margin-left:20%;
     display:flex;
-    justify-content: flex-start;
     padding:10px;
+    text-align: left;
+    align-self:flex-start;
+    border: 1px solid black;
     flex-direction: column;
     height: 300px;;
     width: 400px;
+    top:0;
 }
 #spanNombreUsuario{
     float:left;
@@ -42,7 +75,6 @@
 #fotoPerfil{
     height:520px;
     width: 450px;
-    position: absolute;
 }
 #borrar_barco{
     top:30%;

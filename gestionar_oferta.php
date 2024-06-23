@@ -39,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo '<script>alert("La publicación no existe."); window.location.href = "index.php";</script>';
             die();
         }
+        
 
         $publicacion = $resultado->fetch_assoc();
 
@@ -56,7 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $sql="UPDATE embarcacion SET Ofertado = 0 WHERE id = $idBarcoCambiar ";
                 mysqli_query($conn,$sql);
             }
-
             // Transferir la embarcación ofrecida al dueño de la publicación
             $sql_transferir_ofrecida = "UPDATE embarcacion SET usuarioID = ? WHERE id = ?";
             $stmt_transferir_ofrecida = $conn->prepare($sql_transferir_ofrecida);
@@ -70,7 +70,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt_transferir_publicada->bind_param("ii", $idUsuarioOfertante, $idEmbarcacionPublicada);
             $stmt_transferir_publicada->execute();
             $stmt_transferir_publicada->close();
-
+            //Creando intercambio
+            date_default_timezone_set('America/Argentina/Buenos_Aires');
+            $fecha=date("Y-m-d");
+            $sqlquery="INSERT INTO intercambio (fk_usuario1, fk_embarcacion1,  fk_usuario2, fk_embarcacion2, fecha) values ('{$_SESSION['Id']}','$idEmbarcacionPublicada','$idUsuarioOfertante','$idEmbarcacionOfrecida','$fecha')";
+            mysqli_query($conn,$sqlquery);
             // Eliminar todas las ofertas sobre la misma publicación
             $sql_eliminar_ofertas_publicacion = "DELETE FROM oferta WHERE idPublicacion = ?";
             $stmt_eliminar_ofertas_publicacion = $conn->prepare($sql_eliminar_ofertas_publicacion);
